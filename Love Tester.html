@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Tester 💞</title>
+    <style>
+        body {
+            font-family: 'tangerine', sans-serif;
+            background: linear-gradient(45deg, #ca268b, #e74ba0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #444;
+            flex-direction: column;
+        }
+
+        .play-container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-top: 30px;
+        }
+
+        .play-btn {
+            background-color: #ec2ba9;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .play-btn:hover {
+            background-color: #e61c94;
+        }
+
+        .background-start {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/background-start.png');
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .transparent-play-btn {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .container {
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 400px;
+            z-index: 3;
+        }
+
+        .container h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ec2ba9;
+        }
+
+        .container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .container button {
+            background: #ec2ba9;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .container button:hover {
+            background: #e61c94;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        #loveMusic {
+            display: block;
+            margin: 20px auto; /* Pusatkan audio player secara horizontal */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-start"></div>
+    <button class="transparent-play-btn" onclick="startGame()"></button>
+    
+
+    <div class="play-container" id="playContainer">
+        <h1>Love Tester!</h1>
+        <p>Click below to start the game</p>
+        <button class="play-btn" onclick="startGame()">Play</button>
+    </div>
+
+    <div class="container" id="gameContainer" style="display: none;">
+        <h1>💞 Love Tester 💞</h1>
+        <p>Masukkan nama Anda dan pasangan Anda untuk mengetahui tingkat kecocokan!</p>
+        <input type="text" id="name1" placeholder="Nama Anda">
+        <input type="text" id="name2" placeholder="Nama Pasangan">
+        <button onclick="testLove()">Test My Love</button>
+        <div class="result" id="result"></div>
+        <audio id="loveMusic" controls style="margin-top: 20px; display: none;"></audio>
+    </div>
+
+    <script>
+        function startGame() {
+            document.getElementById('playContainer').style.display = 'none';
+            document.querySelector('.transparent-play-btn').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+        }
+
+        function displayLoading(callback) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "Loading";
+            let dots = 0;
+            const interval = setInterval(() => {
+                resultDiv.innerText = "Loading" + ".".repeat(dots++ % 4);
+            }, 500);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+                callback();
+            }, 3000);
+        }
+
+        function playMusic(compatibility) {
+            const musicPlayer = document.getElementById('loveMusic');
+            if (compatibility >= 1 && compatibility <= 25) {
+                musicPlayer.src = "audio/satu-bulan-bernadya.mp3";
+            } else if (compatibility >= 26 && compatibility <= 50) {
+                musicPlayer.src = "audio/sialan-juicyluicy.mp3";
+            } else if (compatibility >= 51 && compatibility <= 75) {
+                musicPlayer.src = "audio/tungguapalagi-nyomanpaul.mp3";
+            } else if (compatibility >= 76 && compatibility <= 100) {
+                musicPlayer.src = "audio/blue-yungkai.mp3";
+            } else {
+                musicPlayer.src = "";
+            }
+
+            if (musicPlayer.src) {
+                musicPlayer.style.display = "block";
+                musicPlayer.play();
+            } else {
+                musicPlayer.style.display = "none";
+                musicPlayer.pause();
+            }
+        }
+
+        function testLove() {
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+            
+            if (!name1 || !name2) {
+                document.getElementById('result').innerText = "Harap isi kedua nama!";
+                return;
+            }
+            
+            displayLoading(() => {
+                const compatibility = Math.floor(Math.random() * 101);
+                let message;
+
+                if (compatibility <= 25) {
+                    message = `${name1} dan ${name2} hanya memiliki kecocokan ${compatibility}%.\n😢 "Seperti minyak dan air, nggak bisa nyatu walau dipaksa🤧"`;
+                } else if (compatibility <= 50) {
+                    message = `${name1} dan ${name2} memiliki kecocokan ${compatibility}%.\n😊 "Seperti mie instan tanpa bumbu, bisa aja cocok tapi hambar🤕"`;
+                } else if (compatibility <= 75) {
+                    message = `${name1} dan ${name2} memiliki kecocokan ${compatibility}%.\n💖 "Seperti pelangi setelah hujan, indah, tapi harus nunggu waktu yang tepat."`;
+                } else if (compatibility <= 100) {
+                    message = `${name1} dan ${name2} memiliki kecocokan ${compatibility}%.\n🌟 "Kalian itu ibarat Wi-Fi dan password, klop banget kalau digabung!🤩"`;
+                }
+
+                if ((name1.toLowerCase() === "romeo" && name2.toLowerCase() === "juliet") ||
+                    (name1.toLowerCase() === "juliet" && name2.toLowerCase() === "romeo")) {
+                    message = "Kisah cinta kalian seperti legenda, 100% sempurna! 💖";
+                }
+
+                playMusic(compatibility);
+                document.getElementById('result').innerText = message;
+            });
+        }
+    </script>
+
+</body>
+</html>
